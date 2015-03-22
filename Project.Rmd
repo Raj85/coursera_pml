@@ -1,4 +1,4 @@
-Title
+Practicle Machine Learning
 ========================================================
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **Help** toolbar button for more details on using R Markdown).
@@ -59,19 +59,18 @@ validation <- train[-inTrain,]
 
 
 # run the random forest algorithm on the training data set
-rfFit <- randomForest(classe~., data = trainData, method ="rf")
-rfFit
+randfFit <- randomForest(classe~., data = trainData, method ="rf")
+randfFit
 
 # use model to predict on validation data set
-rfPredtest <- predict(rfFit, test)
+randffPredtest <- predict(rfFit, validation)
 # predicted result
 confusionMatrix(rfPred, validation$classe)
 
+# predict on test
+randfPredtest <- predict(rfFit, test)
 
-rfPred <- predict(rfFit, validation)
-workers <- makeCluster(4) # My computer has 4 cores
-registerDoParallel(workers)
-gbmTrain <- train(classe~., data = trainData, method = "gbm")
+)
 
 ```
 
