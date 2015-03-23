@@ -87,7 +87,7 @@ After downloading the data, load the data and replace all the missing values and
 ##   60   94    6
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl std">FieldPosition</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">which</span><span class="hl std">(NAPercent</span><span class="hl opt">==</span><span class="hl num">0</span><span class="hl std">)[</span><span class="hl opt">-</span><span class="hl num">1</span><span class="hl std">]</span>
-<span class="hl com"># remove the missinf values data</span>
+<span class="hl com"># removal of missing data</span>
 <span class="hl std">trainData</span> <span class="hl kwb">&lt;-</span> <span class="hl std">trainData[, FieldPosition]</span>
 <span class="hl std">testData</span> <span class="hl kwb">&lt;-</span> <span class="hl std">testData[, FieldPosition]</span>
 </pre></div>
