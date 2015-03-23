@@ -1,46 +1,46 @@
-Practicle Machine Learning
+Practical Machine Learning
 ========================================================
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **Help** toolbar button for more details on using R Markdown).
-
-When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 Data Processing
 
 After downloading the data, load the data and replace all the missing values and other corrupt values to NA and then find which fields have maximum NA and ignore the fields 
 
 ```{r}
-train <- read.csv("pml-training.csv", header = TRUE, na.strings=c("","NA", "#DIV/0!"))
-test <- read.csv("pml-testing.csv", header = TRUE, na.strings=c("","NA", "#DIV/0!"))
+trainData <- read.csv("pml-training.csv", header = TRUE, na.strings=c("","NA", "#DIV/0!"))
+testData <- read.csv("pml-testing.csv", header = TRUE, na.strings=c("","NA", "#DIV/0!"))
 ```
 
 Data cleaning
 
 ```{r}
 
-NAPercent <- round(colMeans(is.na(train)), 2)
+NAPercent <- round(colMeans(is.na(trainData)), 2)
 table(NAPercent)
-index <- which(NAPercent==0)[-1]
+FieldPosition <- which(NAPercent==0)[-1]
 # remove the missinf values data
-train <- train[, index]
-test <- test[, index]
+trainData <- trainData[, FieldPosition]
+testData <- testData[, FieldPosition]
 ```
 
 Converting the vairables to numeric anbd factor
 
 ```{r}
-# convert all numerical data to numeric class
-for(i in 1:(length(train)-1)){
-  train[,i] <- as.numeric(train[,i])
-  test[,i] <- as.numeric(test[,i])
-}
+# Converting all the other dependant variables into numerical data to numeric class
 
-train[,53] <- as.factor(train[,53])
+trainData <- trainData[, -(1:6)]
+testData<- testData[, -(1:6)]
+for(i in 1:(length(trainData)-1)){
+  trainData[,i] <- as.numeric(trainData[,i])
+  testData[,i] <- as.numeric(testData[,i])
+}
+# Converting the output variable into factor
+trainData[,53] <- as.factor(trainData[,53])
 ```
 
 
 Cross Validation and Prediction
-Spliting the data into trian and validation and then using training dataset applied random forest and other models and used validation dataset to predict.
+
+Spliting the data into trian and validation (70% and 30%) and then using training dataset applied random forest and other models and used validation dataset to predict.
 
 
 ```{r}
@@ -53,24 +53,28 @@ workers <- makeCluster(4) # My computer has 4 cores
 registerDoParallel(workers)
 
 set.seed (4224)
-inTrain <- createDataPartition(y=train$classe,p=0.7, list=FALSE)
-trainData <- train[inTrain,]
-validation <- train[-inTrain,]
+inTrain <- createDataPartition(y=trainData$classe,p=0.7, list=FALSE)
+trainDataset <- trainData[inTrain,]
+validation <- trainData[-inTrain,]
 
 
-# run the random forest algorithm on the training data set
-randfFit <- randomForest(classe~., data = trainData, method ="rf")
+# random forest algorithm on the training data set
+randfFit <- randomForest(classe~., data = trainDataset, method ="rf")
 randfFit
 
-# use model to predict on validation data set
-randffPredtest <- predict(rfFit, validation)
-# predicted result
-confusionMatrix(rfPred, validation$classe)
+# Predict on validation data set
+randffPredtest <- predict(randfFit, validation)
+# Predicted result
+confusionMatrix(randffPredtest, validation$classe)
 
 # predict on test
-randfPredtest <- predict(rfFit, test)
+randfPredtest <- predict(randfFit, testData)
+randfPredtest
 
 )
 
 ```
 
+Result:
+
+Ramdom forest perfomred better with .5% OOB error rate on the training dataset and had a 99% accuracy in the test dataset.
